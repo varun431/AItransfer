@@ -99,6 +99,25 @@ fieldset[disabled] .btn-primary.active {
   color: #33b2fe;
   background-color: white;
 }
+.btn-xl-send {
+    color: #222222;
+    background-color: transparent;
+    border-color: #00be50;
+    font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-radius: 3px;
+    font-size: 18px;
+    padding: 20px 40px;
+}
+.btn-xl-send:hover,
+.btn-xl-send:focus,
+.btn-xl-send:active,
+.btn-xl-send.active {
+    color: white;
+    background-color: #00be50;
+    border-color: #00be50;
+}
 .btn-xl {
   color: white;
   background-color: transparent;
@@ -151,14 +170,14 @@ fieldset[disabled] .btn-xl.active {
   border-color: transparent;
 }
 .navbar-custom .navbar-brand {
-  color: #31c6fe;
+  color: #fed136;
   font-family: "Kaushan Script", "Helvetica Neue", Helvetica, Arial, cursive;
 }
 .navbar-custom .navbar-brand:hover,
 .navbar-custom .navbar-brand:focus,
 .navbar-custom .navbar-brand:active,
 .navbar-custom .navbar-brand.active {
-  color: #fed136;
+  color: #31c6fe;
 }
 .navbar-custom .navbar-collapse {
   border-color: rgba(255, 255, 255, 0.02);
@@ -552,6 +571,9 @@ section h3.section-subheading {
 }
 aside.clients img {
   margin: 50px auto;
+}
+.div-center {
+    margin: 0 auto;
 }
 section#contact {
   background-color: #222222;
