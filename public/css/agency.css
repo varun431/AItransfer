@@ -767,3 +767,12 @@ img::-moz-selection {
 body {
   webkit-tap-highlight-color: #33b2fe;
 }
+.request-status {
+    margin: 20px 0;
+    padding: 0 15px;
+    border-color: #761c19;
+    border-radius: 3px;
+    background-color: #e0dfde;
+    color: #e01824;
+    visibility: hidden;
+}
