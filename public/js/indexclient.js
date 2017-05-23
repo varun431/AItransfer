@@ -35,42 +35,14 @@ function CheckForUser() {
         processData: false,
         dataType: 'text',
         data: formData,
-        success: function (respText) {
+        success: function (data, textStatus, xhr) {
             var status = $('#status');
             var requestStatus = $('#status-div');
-            status.html(respText);
-            if(respText === 'Sent') {
+            status.html(data);
+            if(xhr.status === 200) {
                 requestStatus.css('color', '#00BE50');
             }
             requestStatus.css('visibility', 'visible');
         }
     });
-
-    // var data = document.getElementById('rEmail').value;
-        // var file = document.getElementById('uploadedFile').value;
-        // var params = {
-        //     "email": data,
-        //     "file": file
-        // };
-        //
-        // xhr.open("POST", '/', true);
-        // xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-        // xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        // xhr.onreadystatechange = StateChangeResponse;
-        // xhr.send(JSON.stringify(params));
-    // } else {
-    //     setTimeout(CheckForUser, 1000);
-    // }
 }
-
-var onResponse = function StateChangeResponse(respText) {
-    var status = document.getElementById('status');
-    var requestStatus = document.getElementById('status-div');
-
-    status.innerHTML = respText;
-    if(respText === 'Sent') {
-        requestStatus.style.color = '#00BE50';
-    }
-
-    requestStatus.style.visibility = "visible";
-};

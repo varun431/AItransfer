@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var url = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/users';
 
-mongoose.connect(url, function(err, res) {
+var conn = mongoose.connect(url, function(err, res) {
     if(err) {
         console.log('Error connecting to: ' + url + '\n' + err);
     } else {
@@ -23,7 +23,7 @@ var userSchema = new mongoose.Schema({
     email: { type: String, trim: true, lowercase: true, unique:true, required: 'Email address is required',
         validate: [validateEmail, 'Please fill a valid email address']
     },
-    filename: [{type: mongoose.Schema.Types.ObjectId, ref: "fs.files"}]
+    files: [{type: String}]
 });
 
 var users = mongoose.model('users', userSchema);
