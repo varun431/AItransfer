@@ -22,8 +22,10 @@ function createXMLHttpRequest() {
         return xhr;
 }
 
+/**
+ * @return {boolean}
+ */
 function CheckForUser() {
-    // if(xhr.readyState === 0 || xhr.readyState === 4) {
     var formData = new FormData();
     formData.append('email', $('#rEmail').val());
     formData.append('file', $('#uploadedFile')[0].files[0]);
@@ -36,6 +38,7 @@ function CheckForUser() {
         dataType: 'text',
         data: formData,
         success: function (data, textStatus, xhr) {
+            $("#fileForm")[0].reset();
             var status = $('#status');
             var requestStatus = $('#status-div');
             status.html(data);
@@ -45,4 +48,9 @@ function CheckForUser() {
             requestStatus.css('visibility', 'visible');
         }
     });
+    return false;
+}
+
+function LoginPageRequest() {
+    window.location.href = '/login';
 }
