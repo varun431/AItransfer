@@ -1,26 +1,4 @@
 var $ = require("../vendor/jquery/jquery.js");
-var xhr = createXMLHttpRequest();
-
-function createXMLHttpRequest() {
-    var xhr;
-    if(window.ActiveXObject) {
-        try {
-            xhr = new ActiveXObject("Microsoft.XMLHTTP");
-        } catch(e) {
-            xhr = false;
-        }
-    } else {
-        try {
-            xhr = new XMLHttpRequest();
-        } catch(e) {
-            xhr = false;
-        }
-    }
-    if(!xhr)
-        alert("Can't create XMLHttpRequest object");
-    else
-        return xhr;
-}
 
 /**
  * @return {boolean}

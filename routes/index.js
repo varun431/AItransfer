@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var users = require('./database');
+var users = require('../config/database');
 var formidable = require('formidable');
 var mongoose = require('mongoose');
 var grid = require('gridfs-stream');
