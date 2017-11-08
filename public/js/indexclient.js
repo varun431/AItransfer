@@ -13,16 +13,17 @@ function CheckForUser() {
         type: 'POST',
         contentType: false,
         processData: false,
-        dataType: 'text',
+        dataType: 'text', /* TODO: Make this json*/
         data: formData,
-        success: function (data, textStatus, xhr) {
+        complete: function(xhr, textStatus) {
             $("#fileForm")[0].reset();
             var status = $('#status');
             var requestStatus = $('#status-div');
-            status.html(data);
-            if(xhr.status === 200) {
+            status.html(xhr.responseText);
+            if(xhr.status === 200)
                 requestStatus.css('color', '#00BE50');
-            }
+            else
+                requestStatus.css('color', '#e01824');
             requestStatus.css('visibility', 'visible');
         }
     });

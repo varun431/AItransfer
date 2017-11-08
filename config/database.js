@@ -10,7 +10,7 @@ var conn = mongoose.connect(url, function(err, res) {
     if(err) {
         console.log('Error connecting to: ' + url + '\n' + err);
     } else {
-        console.log('Succeeded connected to: ' + url);
+        console.log('Connected to: ' + url);
     }
 });
 
@@ -21,7 +21,7 @@ var validateEmail = function(email) {
 
 var userSchema = new mongoose.Schema({
     name: {
-        first: String,
+        first: { type: String, trim: true },
         last: { type: String, trim: true }
     },
     email: { type: String, trim: true, lowercase: true, unique: true, required: 'Email address is required',
@@ -148,29 +148,35 @@ userSchema.statics.getAuthenticated = function(email, password, cb) {
 
 var users = mongoose.model('users', userSchema);
 
-var saveUser = function(usr) {
+var saveUser = function(usr, res) {
     usr.save(function (err) {
         if (err)  {
             if(err.name === 'MongoError' && err.code === 11000) {
                 console.log(usr.email + ' already exists!');
+                res.write('Account already exists. Try login.');
             } else {
-                throw err;
+                console.log(err.name + ' : ' + err.message);
+                res.write(err.name);
             }
         }
         else {
             console.log('New account: ' + usr.email);
+            res.writeHead(201, {'Content-Type': 'text/plain'});
+            res.write('Account created successfully!');
         }
+        res.end();
     });
 };
 
-function LoginUser(email, password) {
+var checkUser = function LoginUser(email, password, res) {
     // attempt to authenticate user
     users.getAuthenticated(email, password, function(err, user, reason) {
         if (err) throw err;
 
         // login was successful if we have a user
         if (user) {
-            console.log('login success');
+            console.log('login successful');
+            res.writeHead(201, {'Content-Type': 'text/plain'});
             return;
         }
 
@@ -190,39 +196,18 @@ function LoginUser(email, password) {
                 // temporarily locked
                 console.log("Max attempts reached.");
                 break;
+
+            default:
+                console.log('Unable to login. Try again later');
+                break;
         }
     });
-}
+};
 
-//Sample users
-var user = new users ({
-    name: {first: 'Johnny', last: 'depp'},
-    email: 'jdepp22@gmail.com',
-    password: 'password111'
-});
-saveUser(user);
-
-user = new users ({
-    name: {first: 'Michael', last: 'Jordon'},
-    email: 'michael.jordon@yahoo.com',
-    password: 'password111'
-});
-saveUser(user);
-
-user = new users ({
-    name: {first: 'Mark', last: 'Zuckerberg'},
-    email: 'zuck221@facebook.com',
-    password: 'password111'
-});
-saveUser(user);
-
-user = new users ({
-    name: {first: 'Elon', last: 'Musk'},
-    email: 'elonm@yahoo.com',
-    password: 'password111'
-});
-saveUser(user);
-
-module.exports = users;
+module.exports = {
+    model: users,
+    saveUser: saveUser,
+    checkUser: checkUser
+};
 
 

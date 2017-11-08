@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var users = require('../config/database');
+var users = require('../config/database').model;
 var formidable = require('formidable');
 var mongoose = require('mongoose');
 var grid = require('gridfs-stream');
@@ -16,6 +16,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function (req, res, next) {
     var data,  filePath, fileName;
     var form = new formidable.IncomingForm();
+
     form.keepExtensions = true;
     form.parse(req, function (err, fields, files) {
         data = fields.email;
@@ -24,8 +25,8 @@ router.post('/', function (req, res, next) {
 
         users.find({email: data}, function (err, result) {
             if (err) {
-                res.writeHead(500, {'Content-Type': 'text/plain'});
-                res.write('Unable to send the file. Internal server error');
+                res.writeHead(err.statusCode, {'Content-Type': 'text/plain'});
+                res.write('Unable to send the file due to internal error');
             }
             else {
                 if (result.length > 0) {
