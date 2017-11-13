@@ -147,60 +147,78 @@ userSchema.statics.getAuthenticated = function(email, password, cb) {
 };
 
 var users = mongoose.model('users', userSchema);
-
-var saveUser = function(usr, res) {
+var saveUser = function (usr, callback) {
     usr.save(function (err) {
-        if (err)  {
-            if(err.name === 'MongoError' && err.code === 11000) {
+        var result = [];
+        var message = '';
+
+        if (err) {
+            if (err.name === 'MongoError' && err.code === 11000) {
                 console.log(usr.email + ' already exists!');
-                res.write('Account already exists. Try login.');
+                message += 'Account already exists. Try login.';
             } else {
                 console.log(err.name + ' : ' + err.message);
-                res.write(err.name);
+                message += err.name;
             }
+            result.push({statusCode: 400});
         }
         else {
             console.log('New account: ' + usr.email);
-            res.writeHead(201, {'Content-Type': 'text/plain'});
-            res.write('Account created successfully!');
+            message += 'Account created successfully!';
+            result.push({statusCode: 201});
         }
-        res.end();
+        result.push({error: err, message: message});
+        callback(JSON.stringify(result));
     });
 };
 
-var checkUser = function LoginUser(email, password, res) {
+var checkUser = function LoginUser(email, password, callback) {
     // attempt to authenticate user
     users.getAuthenticated(email, password, function(err, user, reason) {
-        if (err) throw err;
+        var result = [];
+        var message = '';
+
+        if (err) {
+            console.log(err.name + ' : ' + err.message);
+            message += 'Internal error. Try again later.';
+        }
 
         // login was successful if we have a user
         if (user) {
             console.log('login successful');
-            res.writeHead(201, {'Content-Type': 'text/plain'});
-            return;
+            message += 'Login successful';
+            result.push({statusCode: 200});
         }
+        else {
+            // otherwise we can determine why we failed
+            var reasons = users.failedLogin;
+            switch (reason) {
+                case reasons.NOT_FOUND:
+                    console.log("Invalid email or password.");
+                    message += 'Invalid email or password.';
+                    break;
+                case reasons.PASSWORD_INCORRECT:
+                    // note: these cases are usually treated the same - don't tell
+                    // the user *why* the login failed, only that it did
+                    console.log("Invalid email or password.");
+                    message += 'Invalid email or password.';
+                    break;
+                case reasons.MAX_ATTEMPTS:
+                    // send email or otherwise notify user that account is
+                    // temporarily locked
+                    console.log("Max attempts reached.");
+                    message += 'Max attempts reached.';
+                    break;
 
-        // otherwise we can determine why we failed
-        var reasons = users.failedLogin;
-        switch (reason) {
-            case reasons.NOT_FOUND:
-                console.log("Invalid email or password.");
-                break;
-            case reasons.PASSWORD_INCORRECT:
-                // note: these cases are usually treated the same - don't tell
-                // the user *why* the login failed, only that it did
-                console.log("Invalid email or password.");
-                break;
-            case reasons.MAX_ATTEMPTS:
-                // send email or otherwise notify user that account is
-                // temporarily locked
-                console.log("Max attempts reached.");
-                break;
-
-            default:
-                console.log('Unable to login. Try again later');
-                break;
+                default:
+                    console.log('Unable to login. Try again later');
+                    message += 'Unable to login. Try again later.';
+                    break;
+            }
+            result.push({statusCode: 400});
         }
+        result.push({error: err, message: message});
+        callback(err, JSON.stringify(result));
     });
 };
 

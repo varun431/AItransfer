@@ -779,3 +779,10 @@ body {
 a:hover {
     cursor: pointer;
 }
+.top-content {
+    display: none;
+}
+#signInButton,
+#signUpButton {
+    width: 200px;
+}

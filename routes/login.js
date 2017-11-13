@@ -26,7 +26,7 @@ router.post('/signup', function (req, res, next) {
         users.find({email: email}, function (err, result) {
             if (err) {
                 res.writeHead(err.statusCode, {'Content-Type': 'text/plain'});
-                res.write('Internal server error. Try again later');
+                res.write('Internal error. Try again later');
                 res.end();
             }
             else {
@@ -35,7 +35,16 @@ router.post('/signup', function (req, res, next) {
                     email: email,
                     password: password
                 });
-                saveUser(user, res);
+                saveUser(user, function(result) {
+                    if(result) {
+                        var parsedResult = JSON.parse(result);
+                        if (parsedResult.hasOwnProperty('statusCode')) {
+                            res.writeHead(parsedResult['0'].statusCode, {'Content-Type': 'text/plain'});
+                        }
+                        res.write(parsedResult['1'].message);
+                        res.end();
+                    }
+                });
             }
         });
     });
@@ -56,7 +65,16 @@ router.post('/signin', function (req, res, next) {
                res.end();
            }
            else {
-               checkUser(email, password);
+               checkUser(email, password, function(result) {
+                   if(result) {
+                       var parsedResult = JSON.parse(result);
+                       if(parsedResult.hasOwnProperty('statusCode')) {
+                           res.writeHead(parsedResult['0'].statusCode, {'Content-Type': 'text/plain'});
+                       }
+                       res.write(parsedResult['1'].message);
+                       res.end();
+                   }
+               });
            }
        });
    });
